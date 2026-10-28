@@ -1,0 +1,70 @@
+{
+ "generatedAt": "2026-10-26T17:31:25.633Z",
+ "games": 1000,
+ "finished": 1000,
+ "failed": 0,
+ "workers": 4,
+ "seconds": 990,
+ "rows": [
+  {
+   "key": "expert",
+   "label": "极难",
+   "file": "clawd_r4_fast2",
+   "desc": "PUCT + 9k 网络，22ms 硬截断（r4-fast2）",
+   "played": 800,
+   "first": 507,
+   "fourth": 32,
+   "firstRate": 63.4,
+   "fourthRate": 4,
+   "avgPlace": 1.55
+  },
+  {
+   "key": "hard",
+   "label": "困难",
+   "file": "casper_c23_v32",
+   "desc": "PUCT + 网络的 c23-v32 版",
+   "played": 800,
+   "first": 328,
+   "fourth": 40,
+   "firstRate": 41,
+   "fourthRate": 5,
+   "avgPlace": 1.88
+  },
+  {
+   "key": "medium",
+   "label": "中等",
+   "file": "kutulu_wide",
+   "desc": "加宽 beam 的搜索版（wide）",
+   "played": 800,
+   "first": 113,
+   "fourth": 115,
+   "firstRate": 14.1,
+   "fourthRate": 14.4,
+   "avgPlace": 2.49
+  },
+  {
+   "key": "easy",
+   "label": "简单",
+   "file": "kutulu_v2",
+   "desc": "第一代搜索版：3 层 beam + 两种对手假设",
+   "played": 800,
+   "first": 50,
+   "fourth": 208,
+   "firstRate": 6.3,
+   "fourthRate": 26,
+   "avgPlace": 2.91
+  },
+  {
+   "key": "novice",
+   "label": "入门",
+   "file": "baseline_rank212",
+   "desc": "最早的手写启发式（无搜索、无网络）",
+   "played": 800,
+   "first": 2,
+   "fourth": 605,
+   "firstRate": 0.3,
+   "fourthRate": 75.6,
+   "avgPlace": 3.68
+  }
+ ]
+}

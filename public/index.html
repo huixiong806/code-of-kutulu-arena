@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="obsidian">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kutulu Arena · 库图鲁竞技场</title>
+<link rel="stylesheet" href="/css/app.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🐙</text></svg>">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============================== topbar ============================= -->
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <svg class="brand-mark" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
+        <path d="M16 3c3.4 4.8 8 6.2 8 11.4A8 8 0 0 1 8 14.4C8 9.2 12.6 7.8 16 3z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+        <circle cx="16" cy="14" r="2.4" fill="currentColor"/>
+        <path d="M16 22v7M10 25l6 4 6-4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      <span class="brand-text"><b>KUTULU</b><i>ARENA</i></span>
+    </a>
+
+    <div class="topbar-mid" id="topbarMid"></div>
+
+    <div class="topbar-right">
+      <button class="ghost-btn wide" id="rulesBtn" title="规则与计分">规则</button>
+      <div class="theme-picker" id="themePicker" title="配色">
+        <button class="theme-dot" data-theme="obsidian" style="--sw:#67e8c6"></button>
+        <button class="theme-dot" data-theme="neon" style="--sw:#ff5cc8"></button>
+        <button class="theme-dot" data-theme="grove" style="--sw:#9ede4a"></button>
+        <button class="theme-dot" data-theme="parchment" style="--sw:#b4762c"></button>
+        <button class="theme-dot" data-theme="sakura" style="--sw:#e46b8e"></button>
+      </div>
+      <button class="me-chip" id="meChip" title="修改昵称">
+        <span class="me-avatar" id="meAvatar">?</span>
+        <span id="meName">未登录</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================================ home ============================= -->
+  <main class="view" id="view-home">
+    <section class="hero">
+      <h1>库图鲁的墓穴</h1>
+      <p>四名探索者，一座会吃掉理智的迷宫。<br>和真人或四档 AI 同桌，看谁最后发疯。</p>
+      <div class="hero-actions">
+        <button class="btn primary lg" id="quickBtn">快速开始 · 3 个 AI</button>
+        <button class="btn ghost lg" id="createBtn">创建房间</button>
+        <button class="btn ghost lg" id="refreshRooms">刷新</button>
+      </div>
+    </section>
+
+    <div class="home-grid">
+      <section class="card">
+        <div class="card-head"><span>进行中的房间</span><span class="sub" id="roomCount"></span></div>
+        <div id="roomList" class="room-list"><div class="empty">还没有房间，来创建一间吧。</div></div>
+      </section>
+
+      <section class="card side-card">
+        <div class="card-head"><span>怎么玩</span><span class="sub">30 秒上手</span></div>
+        <ul class="howto">
+          <li><b>移动</b>：点棋盘任意格子，或按方向键走一步。</li>
+          <li><b>技能</b>：<kbd>P</kbd> PLAN 回理智 · <kbd>L</kbd> LIGHT 驱怪 · <kbd>Y</kbd> YELL 锁人。</li>
+          <li><b>节奏</b>：四人全部提交才进入下一回合；每人每回合 5 秒，另有一份共享备用时间。</li>
+          <li><b>目标</b>：不要先疯。怪物踩到你会掉 20，落单每回合掉更多。</li>
+        </ul>
+        <div class="divider"></div>
+        <div class="card-head"><span>规则</span><span class="sub">完整版</span></div>
+        <p class="hint" style="margin-top:0">目标、回合顺序、两种怪物的状态机、计分方式都在里面。</p>
+        <button class="btn ghost" id="rulesBtnHome">查看完整规则 →</button>
+        <div class="divider"></div>
+        <div class="card-head"><span>录像</span><span class="sub">打完自动归档</span></div>
+        <div id="replayList" class="replay-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ================================ room ============================= -->
+  <main class="view" id="view-room">
+    <div class="room-head">
+      <div>
+        <div class="room-code">房间 <b id="roomCode">-----</b></div>
+        <div class="room-sub" id="roomSub"></div>
+      </div>
+      <div class="room-actions">
+        <button class="btn ghost" id="copyInvite">复制邀请链接</button>
+        <button class="btn primary" id="startBtn">开始对局</button>
+      </div>
+    </div>
+
+    <div class="seat-grid" id="seatGrid"></div>
+
+    <div class="room-bottom">
+      <section class="card">
+        <div class="card-head"><span>对局设置</span><span class="sub">房主可改</span></div>
+        <div class="settings">
+          <label>步时 <output id="stepOut">5.0s</output>
+            <input type="range" id="stepRange" min="3" max="20" step="0.5" value="5">
+          </label>
+          <label>备用时间 <output id="bankOut">10s</output>
+            <input type="range" id="bankRange" min="0" max="60" step="1" value="10">
+          </label>
+          <div class="setting-row">
+            <span>这局打</span>
+            <div class="seg" id="gamesSeg">
+              <button type="button" data-games="1">1 局</button>
+              <button type="button" data-games="5">5 局</button>
+              <button type="button" data-games="10">10 局</button>
+              <button type="button" data-games="20">20 局</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <span>AI 节奏</span>
+            <div class="seg" id="paceSeg">
+              <button type="button" data-pace="0">关</button>
+              <button type="button" data-pace="400">0.4s</button>
+              <button type="button" data-pace="800">0.8s</button>
+              <button type="button" data-pace="1500">1.5s</button>
+            </div>
+          </div>
+          <label class="inline">房间名
+            <input type="text" id="roomName" maxlength="24" placeholder="库图鲁的墓穴">
+          </label>
+        </div>
+        <p class="hint">每人每回合有「步时」，超出后从自己的「备用时间」里扣；两者都用完则自动 WAIT。<br>
+          多局时按名次记分：<b>第 1 名 +4、第 2 名 +3、第 3 名 +2、第 4 名 +1</b>，最后比累计分。<br>
+          「AI 节奏」是没有真人出招时，每回合之间停多久——全 AI 的房间不设这个会一瞬间打完。</p>
+      </section>
+      <section class="card">
+        <div class="card-head"><span>同桌</span><span class="sub" id="seatSummary"></span></div>
+        <div id="seatSummaryList" class="summary-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ================================ game ============================= -->
+  <main class="view" id="view-game">
+    <div class="game-left">
+      <div class="board-wrap">
+        <canvas id="board"></canvas>
+        <div class="board-hud" id="boardHud"></div>
+        <div class="board-tip" id="boardTip"></div>
+      </div>
+      <div class="turn-bar">
+        <div class="turn-info">
+          <span class="turn-num" id="turnNum">T0</span>
+          <span class="turn-map" id="turnMap"></span>
+        </div>
+        <div class="turn-clock" id="turnClock">
+          <svg viewBox="0 0 44 44" class="clock-ring"><circle cx="22" cy="22" r="19" class="ring-bg"/><circle cx="22" cy="22" r="19" class="ring-fg" id="clockArc"/></svg>
+          <span id="clockText">5.0</span>
+        </div>
+        <div class="turn-params" id="turnParams"></div>
+        <div class="turn-pending" id="turnPending"></div>
+      </div>
+    </div>
+
+    <aside class="game-side">
+      <section class="players" id="players"></section>
+
+      <section class="action-panel" id="actionPanel">
+        <div class="action-title" id="actionTitle">等待其他玩家…</div>
+        <div class="action-grid">
+          <button class="act-btn" data-action="WAIT"><kbd>空格</kbd><b>等待</b><i>原地不动</i></button>
+          <button class="act-btn" data-action="PLAN"><kbd>P</kbd><b>PLAN</b><i id="planCount">剩 2</i></button>
+          <button class="act-btn" data-action="LIGHT"><kbd>L</kbd><b>LIGHT</b><i id="lightCount">剩 3</i></button>
+          <button class="act-btn" data-action="YELL"><kbd>Y</kbd><b>YELL</b><i>锁住邻格</i></button>
+        </div>
+        <div class="submit-state" id="submitState"></div>
+      </section>
+
+      <section class="feed" id="feed"></section>
+    </aside>
+
+    <section class="modal" id="resultModal" hidden>
+      <div class="modal-card wide">
+        <h2 id="resultTitle">对局结束</h2>
+        <div id="resultBody" class="result-body"></div>
+        <div class="modal-actions">
+          <span class="result-note" id="nextHint"></span>
+          <button class="btn ghost" id="watchReplay">看这局录像</button>
+          <button class="btn ghost" id="endSeriesBtn" hidden>结束系列赛</button>
+          <button class="btn primary" id="nextGameBtn" hidden>下一局</button>
+          <button class="btn primary" id="backHome" hidden>回到大厅</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =============================== replay ============================ -->
+  <main class="view" id="view-replay">
+    <div class="game-left">
+      <div class="board-wrap">
+        <canvas id="replayBoard"></canvas>
+        <div class="board-hud" id="replayHud"></div>
+      </div>
+      <div class="replay-bar">
+        <button class="btn icon" id="rpPlay">▶</button>
+        <input type="range" id="rpScrub" min="0" max="0" value="0" step="1">
+        <span class="rp-turn" id="rpTurn">T0</span>
+        <select id="rpSpeed" class="mini-select">
+          <option value="1">1×</option><option value="2">2×</option>
+          <option value="4">4×</option><option value="8">8×</option>
+        </select>
+      </div>
+    </div>
+    <aside class="game-side">
+      <section class="players" id="replayPlayers"></section>
+      <section class="feed" id="replayFeed"></section>
+    </aside>
+  </main>
+
+  <!-- ============================== dialogs ============================ -->
+  <dialog id="nameDialog" class="dlg">
+    <form method="dialog" class="dlg-body">
+      <h3>先起个名字</h3>
+      <p class="muted">第一个字会当作你的头像，也可以直接用 emoji。</p>
+      <input type="text" id="nickInput" maxlength="16" placeholder="例如：阿橘 / 🦑 / Octo">
+      <div class="dlg-actions">
+        <button class="btn primary" value="ok" id="nickOk">进入竞技场</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="createDialog" class="dlg">
+    <form method="dialog" class="dlg-body" id="createForm">
+      <h3>创建房间</h3>
+      <label>房间名<input type="text" id="newRoomName" maxlength="24" value="库图鲁的墓穴"></label>
+      <div class="row2">
+        <label>步时 (秒)<input type="number" id="newStep" min="3" max="20" step="0.5" value="5"></label>
+        <label>备用 (秒)<input type="number" id="newBank" min="0" max="60" step="1" value="10"></label>
+      </div>
+      <label>局数<select id="newGames">
+        <option value="1" selected>1 局定胜负</option>
+        <option value="5">5 局积分</option>
+        <option value="10">10 局积分</option>
+        <option value="20">20 局积分</option>
+      </select></label>
+      <div class="dlg-actions">
+        <button class="btn ghost" value="cancel">取消</button>
+        <button class="btn primary" value="ok" id="doCreate">创建</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="rulesDialog" class="dlg rules-dlg">
+    <div class="rules-body">
+      <div class="rules-head">
+        <h3>库图鲁规则 · 详细版</h3>
+        <button class="ghost-btn" id="rulesClose" title="关闭 (Esc)">✕</button>
+      </div>
+      <div class="rules-content" id="rulesContent"></div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+</div>
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

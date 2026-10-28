@@ -1,0 +1,24 @@
+# build artifacts
+/build/
+/bots/*.exe
+/bots/*.dll
+/bots/lab/
+# the five bots shipped with the repo (compiled, sources are private)
+!/bots/baseline_rank212.exe
+!/bots/kutulu_v2.exe
+!/bots/kutulu_wide.exe
+!/bots/casper_c23_v32.exe
+!/bots/clawd_r4_fast2.exe
+
+# runtime data
+/data/replays/
+*.log
+
+# deps / editors
+node_modules/
+package-lock.json
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

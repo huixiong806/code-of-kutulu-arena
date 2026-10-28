@@ -1,0 +1,14 @@
+{
+  "name": "kutulu-arena",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Code of Kutulu multiplayer arena + replay lab",
+  "scripts": {
+    "start": "node server/index.js",
+    "verify": "node tools/verify_replays.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
